@@ -1,4 +1,6 @@
 /*
+Package cmd go-cobra-sample
+
 Copyright © 2019 vienai8d
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,9 +25,14 @@ import (
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
+
+	"github.com/vienai8d/go-cobra-sample/internal/pkg/mylib"
 )
 
-var cfgFile string
+var (
+	cfgFile string
+	toUpper bool
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -40,7 +47,15 @@ to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello, vienai8d!")
+		message := "Hello, vienai8d!"
+		if toUpper {
+			message = mylib.UpperString(message)
+		}
+		toLower, _ := cmd.Flags().GetBool("lower")
+		if toLower {
+			message = mylib.LowerString(message)
+		}
+		fmt.Println(message)
 	},
 }
 
@@ -64,7 +79,8 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().BoolVarP(&toUpper, "upper", "u", false, "Convert message to uppercase.")
+	rootCmd.Flags().BoolP("lower", "l", false, "Convert message to lowercase.")
 }
 
 // initConfig reads in config file and ENV variables if set.
